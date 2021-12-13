@@ -3,7 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const port =  5500;
+const port = process.env.PORT || 5500;
 const admin = require("./routes/admin")
 const auth = require("./routes/auth")
 const product = require("./routes/product")
@@ -47,6 +47,6 @@ app.use("/api/user", users);
         res.send('EVALY STORES API')
     })
 
-    app.listen(port, () => {
+    app.listen( process.env.PORT || port, () => {
         console.log(`${port}`, 'server connected')
     })
