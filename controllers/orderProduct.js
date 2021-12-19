@@ -1,8 +1,9 @@
-const Order = require('../models/Order');
+const OrderProduct = require('../models/ProductOrder');
 
 const addneworder = async (req, res, next) => {
     try {
-        const newOrder = new Order({
+        const newOrder = new OrderProduct({
+            userId: req.body.userId,
             productName: req.body.productName,
             customerEmail: req.body.customerEmail,
             productImage: req.body.productImage,
@@ -12,14 +13,14 @@ const addneworder = async (req, res, next) => {
         res.status(200).json({ success: 'A new order was created successfully!', order })
     }
     catch (err) {
-        res.status(400).json({ err });
+        res.status(500).json({ message: err.message });
     }
 }
 
 // get all order
 const GetAllOrder = async (req, res, next) => {
     try {
-        const findAllOrder = await Order.find();
+        const findAllOrder = await OrderProduct.find();
         res.status(200).json(findAllOrder)
     }
     catch (err) {
@@ -35,7 +36,7 @@ const Updateorder = async (req, res) => {
     if (req.body.orderId === req.params.id) {
 
         try {
-            const updateorder = await Order.findByIdAndUpdate(req.params.id, {
+            const updateorder = await OrderProduct.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             })
             res.status(200).json(updateorder)
@@ -49,23 +50,41 @@ const Updateorder = async (req, res) => {
     }
 }
 
+// single user order list
+const UserOrderList = async (req, res, next) => {
+    console.log(req.params.id);
+    try {
+        const singleOrders = await OrderProduct.findById(req.params.id);
+        if(singleOrders.customerEmail === req.body.email){
+            const filterOrder =await singleOrders.findById(
+                req.params.id,  
+                { $set: req.body },
+                { new: true }
+            );
+        }
+        res.status(200).json(singleOrders);
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ message: err.message })
+    }
+
+}
 
 //delete a single order
 
 const DeleteOrder = async (req, res, next) => {
 
     try {
-        const order = await Orders.findById(req.params.id);
-        if (Orders.usermail === req.body.email) {
-            try {
-                await order.delete();
-                res.status(200).json({ success: "order has been deleted..." });
-            } catch (err) {
-                res.status(500).json(err);
-            }
-        } else {
-            res.status(401).json({ error: "You can delete only your order!" });
+        const order = await OrderProduct.findById(req.params.id);
+
+        try {
+            await order.delete();
+            res.status(200).json({ success: "order has been deleted..." });
+        } catch (err) {
+            res.status(500).json(err);
         }
+
     } catch (err) {
         res.status(500).json(err);
     }
@@ -74,7 +93,8 @@ module.exports = {
     DeleteOrder,
     addneworder,
     Updateorder,
-    GetAllOrder
+    GetAllOrder,
+    UserOrderList
 
 }
 
