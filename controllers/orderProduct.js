@@ -52,22 +52,17 @@ const Updateorder = async (req, res) => {
 
 // single user order list
 const UserOrderList = async (req, res, next) => {
-    console.log(req.params.id);
-    try {
-        const singleOrders = await OrderProduct.findById(req.params.id);
-        if(singleOrders.customerEmail === req.body.email){
-            const filterOrder =await singleOrders.findById(
-                req.params.id,  
-                { $set: req.body },
-                { new: true }
-            );
+    let id = req.params.id;
+   console.log(id);
+        try {    
+            const orders = await OrderProduct.find({ userId: id });
+            console.log(orders);
+            res.status(200).json(orders)
         }
-        res.status(200).json(singleOrders);
-    }
-    catch (err) {
-        console.log(err)
-        res.status(500).json({ message: err.message })
-    }
+        catch (err) {
+
+            res.status(500).json({ message: err.message })
+        }
 
 }
 
