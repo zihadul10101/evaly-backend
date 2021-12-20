@@ -19,6 +19,9 @@ const OrderSchema = new mongoose.Schema({
     price: {
         type: Array
     
+    },
+    status: {
+        type: String
     }
 },{ timestamps: true });
 module.exports = mongoose.model('orderData',OrderSchema)

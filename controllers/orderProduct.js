@@ -7,7 +7,8 @@ const addneworder = async (req, res, next) => {
             productName: req.body.productName,
             customerEmail: req.body.customerEmail,
             productImage: req.body.productImage,
-            price: req.body.price
+            price: req.body.price,
+            status: req.body.status
         })
         const order = await newOrder.save()
         res.status(200).json({ success: 'A new order was created successfully!', order })
