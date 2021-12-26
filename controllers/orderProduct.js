@@ -31,25 +31,50 @@ const GetAllOrder = async (req, res, next) => {
     }
 }
 
-//update any field from order
+// //update any field from order
 
+// const Updateorder = async (req, res) => {
+//     if (req.body.orderId === req.params.id) {
+
+//         try {
+//             const updateorder = await OrderProduct.findByIdAndUpdate(req.params.id, {
+//                 $set: req.body
+//             })
+//             res.status(200).json(updateorder)
+//         }
+//         catch (err) {
+//             res.status(500).json(err)
+//         }
+//     }
+//     else {
+//         res.status(401).json('Update your order list')
+//     }
+// }
+
+// update service 
 const Updateorder = async (req, res) => {
-    if (req.body.orderId === req.params.id) {
-
-        try {
-            const updateorder = await OrderProduct.findByIdAndUpdate(req.params.id, {
-                $set: req.body
-            })
-            res.status(200).json(updateorder)
+  
+    try {
+       
+        const order = await OrderProduct.findById(req.params.id);
+        if (order.customerEmail === req.body.email) {
+            try {
+                const updateorder = await OrderProduct.findByIdAndUpdate(
+                    req.params.id,
+                    { $set: req.body },
+                    { new: true }
+                );
+                res.status(200).json(updateorder);
+            } catch (err) {
+                res.status(500).json(err);
+            }
+        } else {
+            res.status(401).json("You can update only your Orders");
         }
-        catch (err) {
-            res.status(500).json(err)
-        }
+    } catch (err) {
+        res.status(500).json(err)
     }
-    else {
-        res.status(401).json('Update your order list')
-    }
-}
+};
 
 // single user order list
 const UserOrderList = async (req, res, next) => {
